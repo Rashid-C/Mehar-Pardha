@@ -57,7 +57,7 @@ export default function Home() {
           </div>
         </div>
       )}
-      <div className="mb-6 flex gap-3">
+     <div className="mb-6 flex gap-3">
         <select
           className="bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white text-sm"
           value={filterTailor}
@@ -69,10 +69,22 @@ export default function Home() {
           ))}
         </select>
         <a
-         href="/tailors"
+          href="/add"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium"
+        >
+          + Add Invoice
+        </a>
+        <a
+          href="/tailors"
           className="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 rounded-lg text-sm font-medium"
         >
           Manage Tailors
+        </a>
+        <a
+          href="/report"
+          className="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 rounded-lg text-sm font-medium"
+        >
+          Monthly Report
         </a>
       </div>
       {loading ? (
