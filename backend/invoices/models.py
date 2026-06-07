@@ -47,3 +47,27 @@ class RateSheet(models.Model):
 
     class Meta:
         ordering = ['md_no']
+
+class ShopStitching(models.Model):
+    tailor = models.ForeignKey(Tailor, on_delete=models.PROTECT, related_name='stitchings')
+    md_no = models.CharField(max_length=20)
+    date = models.DateField()
+    pc_count = models.PositiveIntegerField()
+    rate = models.DecimalField(max_digits=8, decimal_places=2)
+    total = models.DecimalField(max_digits=10, decimal_places=2, editable=False)
+    cloth = models.CharField(max_length=100, blank=True)
+    mtr = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    inv_no = models.CharField(max_length=20, blank=True)
+    remarks = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        self.total = self.pc_count * self.rate
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.date} | {self.tailor.code} | {self.md_no} | {self.total}"
+
+    class Meta:
+        ordering = ['-date', '-created_at']
+

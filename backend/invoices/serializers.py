@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import RateSheet, Tailor, Invoice
+from .models import RateSheet, Tailor, Invoice,ShopStitching
 
 class TailorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,3 +23,13 @@ class RateSheetSerializer(serializers.ModelSerializer):
         model = RateSheet
         fields = '__all__'
         read_only_fields = ['tailor_code', 'tailor_name']
+
+class ShopStitchingSerializer(serializers.ModelSerializer):
+    tailor_code = serializers.CharField(source='tailor.code', read_only=True)
+    tailor_name = serializers.CharField(source='tailor.name', read_only=True)
+
+    class Meta:
+        model = ShopStitching
+        fields = '__all__'
+        read_only_fields = ['total', 'tailor_code', 'tailor_name']
+

@@ -9,6 +9,7 @@ const links = [
     { href: '/add', label: 'New Invoice' },
     { href: '/tailors', label: 'Tailors' },
     { href: '/ratesheet', label: 'Rate Sheet' },
+    { href: '/stitching', label: 'Stitching' },
     { href: '/report', label: 'Reports' },
   ]
 

@@ -2,8 +2,8 @@ from rest_framework import viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Sum
-from .models import Tailor, Invoice, RateSheet
-from .serializers import TailorSerializer, InvoiceSerializer, RateSheetSerializer
+from .models import Tailor, Invoice, RateSheet, ShopStitching
+from .serializers import TailorSerializer, InvoiceSerializer, RateSheetSerializer, ShopStitchingSerializer
 
 
 class TailorViewSet(viewsets.ModelViewSet):
@@ -70,6 +70,7 @@ class RateSheetViewSet(viewsets.ModelViewSet):
                 'tailor_name': rate_sheet.tailor.name,
                 'rate': rate_sheet.rate,
                 'work_type': rate_sheet.work_type,
+                'inv_no': '',
                 'source': 'rate_sheet',
             })
         except RateSheet.DoesNotExist:
@@ -88,7 +89,40 @@ class RateSheetViewSet(viewsets.ModelViewSet):
                 'tailor_name': last_invoice.tailor.name,
                 'rate': last_invoice.rate,
                 'work_type': 'regular',
+                'inv_no': str(last_invoice.inv_no),
                 'source': 'invoice_history',
             })
 
         return Response({'error': 'MD number not found'}, status=404)
+
+
+class ShopStitchingViewSet(viewsets.ModelViewSet):
+    queryset = ShopStitching.objects.select_related('tailor').all()
+    serializer_class = ShopStitchingSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['md_no', 'tailor__code', 'inv_no']
+    ordering_fields = ['date', 'total']
+
+    def get_queryset(self):
+        queryset = ShopStitching.objects.select_related('tailor').all()
+        tailor = self.request.query_params.get('tailor')
+        month = self.request.query_params.get('month')
+        date = self.request.query_params.get('date')
+        if tailor:
+            queryset = queryset.filter(tailor__code=tailor)
+        if month:
+            queryset = queryset.filter(date__month=month)
+        if date:
+            queryset = queryset.filter(date=date)
+        return queryset
+
+    @action(detail=False, methods=['get'])
+    def summary(self, request):
+        queryset = self.get_queryset()
+        total_pieces = queryset.aggregate(Sum('pc_count'))['pc_count__sum'] or 0
+        total_amount = queryset.aggregate(Sum('total'))['total__sum'] or 0
+        return Response({
+            'total_pieces': total_pieces,
+            'total_amount': total_amount,
+            'total_records': queryset.count(),
+        })

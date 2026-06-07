@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Tailor, Invoice, RateSheet
+from .models import Tailor, Invoice, RateSheet,ShopStitching
 
 @admin.register(Tailor)
 class TailorAdmin(admin.ModelAdmin):
@@ -18,3 +18,9 @@ class RateSheetAdmin(admin.ModelAdmin):
     list_display = ['md_no', 'tailor', 'rate', 'work_type', 'is_active']
     search_fields = ['md_no', 'tailor__code']
     list_filter = ['tailor', 'is_active', 'work_type']
+
+@admin.register(ShopStitching)
+class ShopStitchingAdmin(admin.ModelAdmin):
+    list_display = ['date', 'tailor', 'md_no', 'pc_count', 'rate', 'total', 'cloth', 'mtr']
+    search_fields = ['md_no', 'tailor__code', 'inv_no']
+    list_filter = ['tailor', 'date']

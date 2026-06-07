@@ -93,4 +93,34 @@ export const lookupRateSheet = (md_no: string) => api.get<{
   tailor_name: string
   rate: number
   work_type: string
+  inv_no: string
+  source: string
 }>(`/ratesheets/lookup/?md_no=${md_no}`)
+
+
+
+export interface ShopStitching {
+  id: number
+  tailor: number
+  tailor_code: string
+  tailor_name: string
+  md_no: string
+  date: string
+  pc_count: number
+  rate: number
+  total: number
+  cloth: string
+  mtr: number | null
+  inv_no: string
+  remarks: string
+}
+
+export const getStitchings = (params?: object) => api.get<ShopStitching[]>('/stitching/', { params })
+export const createStitching = (data: object) => api.post('/stitching/', data)
+export const updateStitching = (id: number, data: object) => api.put(`/stitching/${id}/`, data)
+export const deleteStitching = (id: number) => api.delete(`/stitching/${id}/`)
+export const getStitchingSummary = (params?: object) => api.get<{
+  total_pieces: number
+  total_amount: number
+  total_records: number
+}>('/stitching/summary/', { params })
